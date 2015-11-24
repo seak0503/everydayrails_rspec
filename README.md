@@ -1,7 +1,17 @@
-Sample Rails 4.1.x application for [Everyday Rails Testing with RSpec: A Practical Approach to Test-driven Development](https://leanpub.com/everydayrailsrspec) by Aaron Sumner. This repository demonstrates incremental testing of an existing application, starting with an untested codebase and working through model, controller, and feature specs.
+このリポジトリの説明
+------------------------
 
-Each chapter's progress has a specific branch in this repository. See chapter 1 of the book for details.
+[everyday Rails RSpecによるRailsテスト入門](https://leanpub.com/everydayrailsrspec-jp)の個人勉強用リポジトリです
 
-Using Git, you can check out each version by name. See details in the book.
+使い方
+--------
 
-If you're not comfortable with Git, you can also use GitHub's handy branch/tag filter to select a specific tag and browse the source code online. To learn more about Git, I recommend the free resources [Git Immersion](http://gitimmersion.com/) or [Try Git](http://www.codeschool.com/courses/try-git).
+```
+$ git clone git@github.com:seak0503/everydayrails_rspec.git
+
+$ cd everydayrails_rspec
+
+$ rbenv gemset create 2.1.1 everydayrails_rspec
+
+$ bundle install
+```
