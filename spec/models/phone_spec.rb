@@ -2,17 +2,14 @@ require 'rails_helper'
 
 describe Phone do
   example "連絡先ごとに重複した電話番号を許可しないこと" do
-    contact = Contact.create(
-      firstname: 'Joe',
-      lastname: 'Tester',
-      email: 'joetester@example.com'
-    )
-    contact.phones.create(
-      phone_type: 'home',
+    contact = create(:contact)
+    create(:home_phone,
+      contact: contact,
       phone: '785-555-1234'
     )
-    mobile_phone = contact.phones.build(
-      phone_type: 'mobile',
+
+    mobile_phone = build(:mobile_phone,
+      contact: contact,
       phone: '785-555-1234'
     )
 
@@ -21,21 +18,9 @@ describe Phone do
   end
 
   example '2件の連絡先で同じ電話番号を共有できること' do
-    contact = Contact.create(
-      firstname: 'Joe',
-      lastname: 'Tester',
-      email: 'joetester@example.com'
-    )
-    contact.phones.create(
-      phone_type: 'home',
+    create(:home_phone,
       phone: '785-555-1234'
     )
-    other_contact = Contact.new
-    other_phone = other_contact.phones.build(
-      phone_type: 'home',
-      phone: '785-555-1234'
-    )
-
-    expect(other_phone).to be_valid
+    expect(build(:home_phone, phone: '785-555-1234')).to be_valid
   end
 end
