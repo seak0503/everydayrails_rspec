@@ -38,6 +38,10 @@ describe Contact do
     expect(contact.name).to eq 'Jane Smith'
   end
 
+  example '3つの電話番号を持つこと' do
+    expect(create(:contact).phones.count).to eq(3)
+  end
+
   describe '文字で性をフィルタする' do
     before :each do
       @smith = create(:contact,
