@@ -15,8 +15,16 @@ describe ContactsController do
   end
 
   describe 'GET#show' do
-    example '@contactに要求された連絡先を割り当てること'
-    example ':showテンプレートを表示すること'
+    example '@contactに要求された連絡先を割り当てること' do
+      contact = create(:contact)
+      get :show, id: contact
+      expect(assigns(:contact)).to eq(contact)
+    end
+    example ':showテンプレートを表示すること' do
+      contact = create(:contact)
+      get :show, id: contact
+      expect(response).to render_template :show
+    end
   end
 
   describe 'GET#new' do
