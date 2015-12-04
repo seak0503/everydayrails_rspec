@@ -4,13 +4,31 @@ describe ContactsController do
 
   describe 'GET#index' do
     context 'params[:litter]がある場合' do
-      example '指定された文字で始まる連絡先を配列にまとめること'
-      example ':indexテンプレートを表示すること'
+      example '指定された文字で始まる連絡先を配列にまとめること' do
+        smith = create(:contact, lastname: 'Smith')
+        jones = create(:contact, lastname: 'Jones')
+        get :index, letter: 'S'
+        expect(assigns(:contacts)).to match_array([smith])
+      end
+
+      example ':indexテンプレートを表示すること' do
+        get :index, letter: 'S'
+        expect(response).to render_template :index
+      end
     end
 
     context 'parmas[:letter]がない場合' do
-      example '全ての連絡先を配列にまとめること'
-      example ':indexテンプレートを表示すること'
+      example '全ての連絡先を配列にまとめること' do
+        smith = create(:contact, lastname: 'Smith')
+        jones = create(:contact, lastname: 'Jones')
+        get :index
+        expect(assigns(:contacts)).to match_array([smith, jones])
+      end
+
+      example ':indexテンプレートを表示すること' do
+        get :index
+        expect(response).to render_template :index
+      end
     end
   end
 
@@ -20,6 +38,7 @@ describe ContactsController do
       get :show, id: contact
       expect(assigns(:contact)).to eq(contact)
     end
+
     example ':showテンプレートを表示すること' do
       contact = create(:contact)
       get :show, id: contact
@@ -28,19 +47,54 @@ describe ContactsController do
   end
 
   describe 'GET#new' do
-    example '@contactに新しい連絡先を割り当てること'
-    example ':newテンプレートを表示すること'
+    example '@contactに新しい連絡先を割り当てること' do
+      get :new
+      expect(assigns(:contact)).to be_a_new(Contact)
+    end
+
+    example ':newテンプレートを表示すること' do
+      get :new
+      expect(response).to render_template :new
+    end
   end
 
   describe 'GET#edit' do
-    example '@contactに要求された連絡先を割り当てること'
-    example ':editテンプレートを表示すること'
+    example '@contactに要求された連絡先を割り当てること' do
+      contact = create(:contact)
+      get :edit, id: contact
+      expect(assigns(:contact)).to eq(contact)
+    end
+
+    example ':editテンプレートを表示すること' do
+      contact = create(:contact)
+      get :edit, id: contact
+      expect(response).to render_template :edit
+    end
   end
 
   describe 'POST#create' do
+    before do
+      @phones = [
+        attributes_for(:phone),
+        attributes_for(:phone),
+        attributes_for(:phone)
+      ]
+    end
+
     context '有効な属性の場合' do
-      example 'データベースに新しい連絡先を割り当てること'
-      example 'contacts#showにリダイレクトすること'
+      example 'データベースに新しい連絡先を割り当てること' do
+        expect {
+          post :create, contact: attributes_for(:contact,
+            phones_attributes: @phones)
+        }.to change(Contact, :count).by(1)
+      end
+
+      example 'contacts#showにリダイレクトすること' do
+        post :create, contact: attributes_for(:contact,
+          phones_attributes: @phones)
+        expect(response).to redirect_to contact_path(assigns[:contact])
+      end
+
     end
 
     context '無効な属性の場合' do
