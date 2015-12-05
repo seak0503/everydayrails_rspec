@@ -98,14 +98,37 @@ describe ContactsController do
     end
 
     context '無効な属性の場合' do
-      example 'データベースに新しい連絡先を保存しないこと'
-      example ' :newテンプレートを再表示すること'
+      example 'データベースに新しい連絡先を保存しないこと' do
+        expect{
+          post :create,
+            contact: attributes_for(:invalid_contact)
+        }.not_to change(Contact, :count)
+      end
+
+      example ' :newテンプレートを再表示すること' do
+        post :create,
+          contact: attributes_for(:invalid_contact)
+        expect(response).to render_template :new
+      end
     end
   end
 
   describe 'PATCH#update' do
+    before do
+      @contact = create(:contact,
+        firstname: 'Lawrence',
+        lastname: 'Smith')
+    end
+
     context '有効な属性の場合' do
-      example 'データベースの連絡先を更新すること'
+      example '要求された@contactを取得すること' do
+        ###
+        puts ("patchデバッグ")
+        p(patch :update, id: @contact, contact: attributes_for(:contact))
+        ###
+        patch :update, id: @contact, contact: attributes_for(:contact)
+        expect(assigns(:contact)).to eq(@contact)
+      end
       example '更新した連絡先のページへリダイレクトすること'
     end
 
