@@ -122,12 +122,16 @@ describe ContactsController do
 
     context '有効な属性の場合' do
       example '要求された@contactを取得すること' do
-        ###
-        puts ("patchデバッグ")
-        p(patch :update, id: @contact, contact: attributes_for(:contact))
-        ###
         patch :update, id: @contact, contact: attributes_for(:contact)
         expect(assigns(:contact)).to eq(@contact)
+        ###
+        puts("attributes_forデバッグ")
+        p(attributes_for(:contact))
+        puts("@contactデバッグ")
+        p @contact
+        puts("assigns(:contact)デバッグ")
+        p assigns(:contact)
+        ###
       end
       example '更新した連絡先のページへリダイレクトすること'
     end
