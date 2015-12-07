@@ -122,18 +122,36 @@ describe ContactsController do
 
     context '有効な属性の場合' do
       example '要求された@contactを取得すること' do
-        patch :update, id: @contact, contact: attributes_for(:contact)
+        test = attributes_for(:contact)
+        patch :update, id: @contact, contact: test
+        ###
+        puts("attributes_forで作成したtest変数デバッグ1")
+        p(test)
+        puts("@contactデバッグ1")
+        p @contact
+        puts("assigns(:contact)デバッグ1")
+        p assigns(:contact)
+        ###
         expect(assigns(:contact)).to eq(@contact)
         ###
-        puts("attributes_forデバッグ")
-        p(attributes_for(:contact))
-        puts("@contactデバッグ")
+        puts("attributes_forで作成したtest変数デバッグ2")
+        p(test)
+        puts("@contactデバッグ2")
         p @contact
-        puts("assigns(:contact)デバッグ")
+        puts("assigns(:contact)デバッグ2")
         p assigns(:contact)
         ###
       end
-      example '更新した連絡先のページへリダイレクトすること'
+
+      example '@contactの属性を変更すること' do
+        patch :update, id: @contact,
+          contact: attributes_for(:contact,
+            firstname: 'Larry',
+            lastname: 'Smith')
+        @contact.reload
+        expect(@contact.firstname).to eq('Larry')
+        expect(@contact.lastname).to eq('Smith')
+      end
     end
 
     context '無効な属性の場合' do
