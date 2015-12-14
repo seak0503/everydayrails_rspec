@@ -122,25 +122,8 @@ describe ContactsController do
 
     context '有効な属性の場合' do
       example '要求された@contactを取得すること' do
-        test = attributes_for(:contact)
-        patch :update, id: @contact, contact: test
-        ###
-        puts("attributes_forで作成したtest変数デバッグ1")
-        p(test)
-        puts("@contactデバッグ1")
-        p @contact
-        puts("assigns(:contact)デバッグ1")
-        p assigns(:contact)
-        ###
+        patch :update, id: @contact, contact: attributes_for(:contact)
         expect(assigns(:contact)).to eq(@contact)
-        ###
-        puts("attributes_forで作成したtest変数デバッグ2")
-        p(test)
-        puts("@contactデバッグ2")
-        p @contact
-        puts("assigns(:contact)デバッグ2")
-        p assigns(:contact)
-        ###
       end
 
       example '@contactの属性を変更すること' do
@@ -152,11 +135,27 @@ describe ContactsController do
         expect(@contact.firstname).to eq('Larry')
         expect(@contact.lastname).to eq('Smith')
       end
+
+      example '更新した連絡先のページへリダイレクトすること' do
+        patch :update, id: @contact, contact: attributes_for(:contact)
+        expect(response).to redirect_to @contact
+      end
     end
 
     context '無効な属性の場合' do
-      example '連絡先を更新しないこと'
-      example ':editレンプレートを再表示すること'
+      example '連絡先を更新しないこと' do
+        patch :update, id: @contact,
+          contact: attributes_for(:contact,
+            firstname: "Larry", lastname: nil)
+        @contact.reload
+        expect(@contact.firstname).not_to eq("Larry")
+        expect(@contact.lastname).to eq("Smith")
+      end
+      example ':editレンプレートを再表示すること' do
+        patch :update, id: @contact,
+          contact: attributes_for(:invalid_contact)
+        expect(response).to render_template :edit
+      end
     end
   end
 
