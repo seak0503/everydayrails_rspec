@@ -160,8 +160,35 @@ describe ContactsController do
   end
 
   describe 'DELETE#destroy' do
-    example 'データベースから連絡先を削除すること'
-    example 'contacts#indexにリダイレクトすること'
+    before do
+      @contact = create(:contact)
+    end
+
+    example 'データベースから連絡先を削除すること' do
+      expect{
+        delete :destroy, id: @contact
+      }.to change(Contact, :count).by(-1)
+    end
+    example 'contacts#indexにリダイレクトすること' do
+      delete :destroy, id: @contact
+      expect(response).to redirect_to contacts_url
+    end
+  end
+
+  describe 'PATCH hide_contact' do
+    before do
+      @contact = create(:contact)
+    end
+
+    example '連絡先をhidden状態にすること' do
+      patch :hide_contact, id: @contact
+      expect(@contact.reload.hidden?).to be_truthy
+    end
+
+    example 'contacts#indexにリダイレクトすること' do
+      patch :hide_contact, id: @contact
+      expect(response).to redirect_to contacts_url
+    end
   end
 end
 
