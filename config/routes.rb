@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :sessions
 
   resources :contacts do
+    resources :phones
     member { patch "hide_contact" }
   end
 
