@@ -24,6 +24,9 @@ RSpec.configure do |config|
   # ファクトリを簡単に呼び出せるよう、Factory Girlの構文をインクルードする
   config.include FactoryGirl::Syntax::Methods
 
+  # LoginMacrosモジュールの場所をRspecに教えるための設定
+  config.include LoginMacros
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.

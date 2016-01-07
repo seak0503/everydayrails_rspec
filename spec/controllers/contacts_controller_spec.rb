@@ -202,8 +202,7 @@ describe ContactsController do
 
   describe "administrator access" do
     before do
-      user = create(:admin)
-      session[:user_id] = user.id
+      set_user_session create(:admin)
     end
 
     it_behaves_like "public access to contacts"
@@ -212,8 +211,7 @@ describe ContactsController do
 
   describe "user access" do
     before do
-      user = create(:user)
-      session[:user_id] = user.id
+      set_user_session create(:user)
     end
 
     it_behaves_like "public access to contacts"
@@ -226,7 +224,7 @@ describe ContactsController do
     describe 'GET #new' do
       example 'ログインを要求すること ' do
         get :new
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
@@ -234,7 +232,7 @@ describe ContactsController do
       example 'ログインを要求すること' do
         contact = create(:contact)
         get :edit, id: contact
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
@@ -242,7 +240,7 @@ describe ContactsController do
       example 'ログインを要求すること' do
         post :create, id: create(:contact),
           contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
@@ -250,14 +248,14 @@ describe ContactsController do
       example 'ログインを要求すること' do
         patch :update, id: create(:contact),
           contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
 
     describe 'DELETE #destroy' do
       example 'ログインを要求すること' do
         delete :destroy, id: create(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to require_login
       end
     end
   end
