@@ -11,7 +11,7 @@ $ git clone git@github.com:seak0503/everydayrails_rspec.git
 
 $ cd everydayrails_rspec
 
-$ rbenv gemset create 2.1.1 everydayrails_rspec
+$ rbenv gemset create 2.2.3 everydayrails_rspec
 
 $ bundle install
 ```
