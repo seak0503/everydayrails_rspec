@@ -46,5 +46,12 @@ describe Contact do
   end
 
   # 連絡先のフルネームを文字列として返すこと
-  it "returns a contact's full name as a string"
+  it "returns a contact's full name as a string" do
+    contact = Contact.new(
+      firstname: 'John',
+      lastname: 'Doe',
+      email: 'johndoe@example.com'
+    )
+    expect(contact.name).to eq 'John Doe'
+  end
 end
