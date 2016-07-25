@@ -44,6 +44,11 @@ describe Contact do
     expect(contact.name).to eq 'Jane Smith'
   end
 
+  # 3つの電話番号を持つこと
+  it "has three phone numbers" do
+    expect(create(:contact).phones.count).to eq 3
+  end
+
   # 文字で姓をフィルタする
   describe 'filter last name by letter' do
     before do
