@@ -79,15 +79,27 @@ describe ContactsController do
   end
 
   describe 'POST #create' do
+    before do
+      @phones = [
+        attributes_for(:phone),
+        attributes_for(:phone),
+        attributes_for(:phone)
+      ]
+    end
     # 有効な属性の場合
     context 'with valid attributes' do
       # データベースに新しい連絡先を保存すること
       it 'saves the new contact in the database' do
-
+        expect {
+          post :create, contact: attributes_for(:contact,
+            phones_attributes: @phones)
+        }.to change(Contact, :count).by(1)
       end
       # contacts#showにリダイレクトすること
       it 'redirects to contact#show' do
-
+        post :create, contact: attributes_for(:contact,
+          phones_attributes: @phones)
+        expect(response).to redirect_to contact_path(assigns[:contact])
       end
     end
 
@@ -95,49 +107,85 @@ describe ContactsController do
     context 'with invalid attributes' do
       # データベースに新しい連絡先を保存しないこと
       it 'does not save the new contact in the database' do
-
+        expect {
+          post :create, contact: attributes_for(:invalid_contact)
+        }.not_to change(Contact, :count)
       end
       # :new テンプレートを再表示すること
       it 're-renders the :new template' do
-
+        post :create,
+          contact: attributes_for(:invalid_contact)
+        expect(response).to render_template :new
       end
     end
   end
 
   describe 'PATCH #update' do
-    # 有効な属性の場合
-    context 'with valid attributes' do
-      # データベースの連絡先を更新すること
-      it 'updates the contact in the database' do
+    before do
+      @contact = create(:contact,
+        firstname: 'Lawrence',
+        lastname: 'Smith')
+    end
 
+    # 有効な属性の場合
+    context 'valid attributes' do
+      # 要求された@contactを取得すること
+      it 'locates the requested @contact' do
+        patch :update, id: @contact, contact: attributes_for(:contact)
+        expect(assigns(:contact)).to eq(@contact)
+      end
+
+      # @contactの属性を変更すること
+      it 'changes the requested @contact' do
+        patch :update, id: @contact,
+          contact: attributes_for(:contact,
+            firstname: 'Larry',
+            lastname: 'Smith')
+        @contact.reload
+        expect(@contact.firstname).to eq('Larry')
+        expect(@contact.lastname).to eq('Smith')
       end
       # 更新した連絡先のページへリダイレクトすること
       it 'redirects to the contact' do
-
+        patch :update, id: @contact, contact: attributes_for(:contact)
+        expect(response).to redirect_to @contact
       end
     end
 
     # 無効な属性の場合
     context 'with invalid attributes' do
-      # 連絡先を更新しないこと
-      it 'does not update the contact' do
-
+      # 連絡先の属性を更新しないこと
+      it "does not change the contact's attributes"  do
+        patch :update, id: @contact,
+          contact: attributes_for(:contact,
+            firstname: 'Larry', lastname: nil)
+        @contact.reload
+        expect(@contact.firstname).not_to eq("Larry")
+        expect(@contact.lastname).to eq("Smith")
       end
       # :editテンプレートを再表示すること
       it 're-renders the :edit template' do
-
+        patch :update, id: @contact,
+          contact: attributes_for(:invalid_contact)
+        expect(response).to render_template :edit
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    # データベースから連絡先を削除すること
-    it 'deletes the contact from the database' do
-
+    before do
+      @contact = create(:contact)
+    end
+    # 連絡先を削除すること
+    it 'deletes the contact' do
+      expect {
+        delete :destroy, id: @contact
+      }.to change(Contact, :count).by(-1)
     end
     # contacts#indexにリダイレクトすること
     it 'redirects to contacts#index' do
-
+      delete :destroy, id: @contact
+      expect(response).to redirect_to contacts_url
     end
   end
 end
