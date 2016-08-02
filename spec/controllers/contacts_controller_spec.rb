@@ -123,197 +123,57 @@ describe ContactsController do
       end
     end
 
-    #続きはここから
-  end
-
-
-  describe 'administrator access' do
-    before do
-      user = create(:admin)
-      session[:user_id] = user.id
-    end
-
-    it_behaves_like 'public access to contacts'
-
-    describe 'GET #index' do
-      # params[:letter]がある場合
-      context 'with params[:letter]' do
-        # 指定された文字で始まる連絡先を配列にまとめること
-        it 'populates an array of contacts starting with the letter' do
-          smith = create(:contact, lastname: 'Smith')
-          jones = create(:contact, lastname: 'Jones')
-          get :index, letter: 'S'
-          expect(assigns(:contacts)).to match_array([smith])
-        end
-        # :indexテンプレートを表示すること
-        it 'renders th  :index template' do
-          get :index, letter: 'S'
-          expect(response).to render_template :index
-        end
-      end
-      # params[:letter]がない場合
-      context 'without params[:letter]' do
-        # 全ての連絡先を配列にまとめること
-        it 'populates an array of all contacts' do
-          smith = create(:contact, lastname: 'Smith')
-          jones = create(:contact, lastname: 'Jones')
-          get :index
-          expect(assigns(:contacts)).to match_array([smith, jones])
-        end
-        # :indexテンプレートを表示すること
-        it 'renders the :index template' do
-          get :index
-          expect(response).to render_template :index
-        end
-      end
-    end
-
-    describe 'GET #show' do
-      # @contactに要求された連絡先を割り当てること
-      it 'assigns the requested contact to @contact' do
-        contact = create(:contact)
-        get :show, id: contact
-        expect(assigns(:contact)).to eq contact
-      end
-      # :showテンプレートを表示すること
-      it 'renders the :show template' do
-        contact = create(:contact)
-        get :show, id: contact
-        expect(response).to render_template :show
-      end
-    end
-
-    describe 'GET #new' do
-      # @contactに新しい連絡先を割り当てること
-      it 'assigns a new Contact to @contact' do
-        get :new
-        expect(assigns(:contact)).to be_a_new(Contact)
-      end
-      # :newテンプレートを表示すること
-      it 'renders the :new template' do
-        get :new
-        expect(response).to render_template :new
-      end
-    end
-
-    describe 'GET #edit' do
-      # @contactに要求された連絡先を割り当てること
-      it 'assigns th requested contact to @contact' do
-        contact = create(:contact)
-        get :edit, id: contact
-        expect(assigns(:contact)).to eq contact
-      end
-      # :editテンプレートを表示すること
-      it 'renders the :edit template' do
-        contact = create(:contact)
-        get :edit, id: contact
-        expect(response).to render_template :edit
-      end
-    end
-
-    describe 'POST #create' do
-      before do
-        @phones = [
-          attributes_for(:phone),
-          attributes_for(:phone),
-          attributes_for(:phone)
-        ]
-      end
-      # 有効な属性の場合
-      context 'with valid attributes' do
-        # データベースに新しい連絡先を保存すること
-        it 'saves the new contact in the database' do
-
-          ###
-          puts "createデバッグ"
-          @contact = create(:contact)
-          @contact.phones.each do |p|
-            puts p.phone
-            puts p.phone_type
-          end
-          ###
-
-          expect {
-            #post :create, contact: attributes_for(:contact,
-            #  phones_attributes: @phones)
-            post :create, contact: attributes_for(:contact)
-          }.to change(Contact, :count).by(1)
-        end
-        # contacts#showにリダイレクトすること
-        it 'redirects to contact#show' do
-          post :create, contact: attributes_for(:contact,
-            phones_attributes: @phones)
-          expect(response).to redirect_to contact_path(assigns[:contact])
-        end
-      end
-
-      # 無効な属性の場合
-      context 'with invalid attributes' do
-        # データベースに新しい連絡先を保存しないこと
-        it 'does not save the new contact in the database' do
-          puts "デバッグ"
-          puts attributes_for(:invalid_contact)
-
-          expect {
-            post :create, contact: attributes_for(:invalid_contact)
-          }.not_to change(Contact, :count)
-        end
-        # :new テンプレートを再表示すること
-        it 're-renders the :new template' do
-          post :create,
-            contact: attributes_for(:invalid_contact)
-          expect(response).to render_template :new
-        end
-      end
-    end
-
     describe 'PATCH #update' do
       before do
         @contact = create(:contact,
           firstname: 'Lawrence',
-          lastname: 'Smith')
+          lastname: 'Smith'
+        )
       end
 
-      # 有効な属性の場合
-      context 'valid attributes' do
-        # 要求された@contactを取得すること
+      context "valid attributes" do
         it 'locates the requested @contact' do
-          patch :update, id: @contact, contact: attributes_for(:contact)
-          expect(assigns(:contact)).to eq(@contact)
+          patch :update, id: @contact,
+            contact: attributes_for(:contact)
+          expect(assigns(:contact)).to eq @contact
         end
 
-        # @contactの属性を変更すること
-        it 'changes the requested @contact' do
+        it "changes the contact's attributes" do
           patch :update, id: @contact,
             contact: attributes_for(:contact,
               firstname: 'Larry',
-              lastname: 'Smith')
+              lastname: 'Smith'
+            )
           @contact.reload
-          expect(@contact.firstname).to eq('Larry')
-          expect(@contact.lastname).to eq('Smith')
+          expect(@contact.firstname).to eq 'Larry'
+          expect(@contact.lastname).to eq 'Smith'
         end
-        # 更新した連絡先のページへリダイレクトすること
-        it 'redirects to the contact' do
+
+        it 'redirects to the update contact' do
           patch :update, id: @contact, contact: attributes_for(:contact)
           expect(response).to redirect_to @contact
         end
       end
 
-      # 無効な属性の場合
-      context 'with invalid attributes' do
-        # 連絡先の属性を更新しないこと
-        it "does not change the contact's attributes"  do
+      context "invalid attributes" do
+        it 'locates the requested @contact' do
+          patch :update, id: @contact, contact: attributes_for(:invalid_contact)
+          expect(assigns(:contact)).to eq @contact
+        end
+
+        it "does not change the contact's attributes" do
           patch :update, id: @contact,
             contact: attributes_for(:contact,
-              firstname: 'Larry', lastname: nil)
+              firstname: 'Larry',
+              lastname: nil
+            )
           @contact.reload
-          expect(@contact.firstname).not_to eq("Larry")
-          expect(@contact.lastname).to eq("Smith")
+          expect(@contact.firstname).not_to eq('Larry')
+          expect(@contact.lastname).to eq('Smith')
         end
-        # :editテンプレートを再表示すること
-        it 're-renders the :edit template' do
-          patch :update, id: @contact,
-            contact: attributes_for(:invalid_contact)
+
+        it 're-renders the edit method' do
+          patch :update, id: @contact, contact: attributes_for(:invalid_contact)
           expect(response).to render_template :edit
         end
       end
@@ -323,18 +183,28 @@ describe ContactsController do
       before do
         @contact = create(:contact)
       end
-      # 連絡先を削除すること
+
       it 'deletes the contact' do
         expect {
           delete :destroy, id: @contact
         }.to change(Contact, :count).by(-1)
       end
-      # contacts#indexにリダイレクトすること
+
       it 'redirects to contacts#index' do
         delete :destroy, id: @contact
         expect(response).to redirect_to contacts_url
       end
     end
+  end
+
+  describe 'administrator access' do
+    before do
+      user = create(:admin)
+      session[:user_id] = user.id
+    end
+
+    it_behaves_like 'public access to contacts'
+    it_behaves_like 'full access to contacts'
   end
 
   describe 'user access' do
@@ -343,183 +213,13 @@ describe ContactsController do
       session[:user_id] = user.id
     end
 
-    describe 'GET #index' do
-      context 'with params[:letter]' do
-        it 'populates an array of contacts starting with the letter' do
-          smith = create(:contact, lastname: 'Smith')
-          jones = create(:contact, lastname: 'Jones')
-          get :index, letter: 'S'
-          expect(assigns(:contacts)).to match_array([smith])
-        end
-
-        it 'renders th :index template' do
-          get :index, letter: 'S'
-          expect(response).to render_template :index
-        end
-      end
-
-      context 'without params[:letter]' do
-        it 'populates an array of all contacts' do
-          smith = create(:contact, lastname: 'Smith')
-          jones = create(:contact, lastname: 'Jones')
-          get :index
-          expect(assigns(:contacts)).to match_array([smith, jones])
-        end
-
-        it 'renders the :index template' do
-          get :index
-          expect(response).to render_template :index
-        end
-      end
-    end
-
-    describe 'GET #show' do
-      it 'assigns the requested contact to @contact' do
-        contact = create(:contact)
-        get :show, id: contact
-        expect(assigns(:contact)).to eq contact
-      end
-
-      it 'renders the :show template' do
-        contact = create(:contact)
-        get :show, id: contact
-        expect(response).to render_template :show
-      end
-    end
-
-    describe 'GET #new' do
-      it 'assigns a new Contact to @contact' do
-        get :new
-        expect(assigns(:contact)).to be_a_new(Contact)
-      end
-
-      it 'renders the :new template' do
-        get :new
-        expect(response).to render_template :new
-      end
-    end
-
-    describe 'GET #edit' do
-      it 'assigns the requested contact to @contact' do
-        contact = create(:contact)
-        get :edit, id: contact
-        expect(assigns(:contact)).to eq contact
-      end
-
-      it 'renders the :edit template' do
-        contact = create(:contact)
-        get :edit, id: contact
-        expect(response).to render_template :edit
-      end
-    end
-
-    describe 'POST #create' do
-      before do
-        @phones = [
-          attributes_for(:phone),
-          attributes_for(:phone),
-          attributes_for(:phone)
-        ]
-      end
-
-      context 'with valid attributes' do
-        it 'saves the new contact in the database' do
-          expect {
-            post :create, contact: attributes_for(:contact,
-              phones_attributes: @phones)
-          }.to change(Contact, :count).by(1)
-        end
-
-        it 'redirects to contacts#show' do
-          post :create, contact: attributes_for(:contact,
-            phones_attributes: @phones)
-          expect(response).to redirect_to contact_path(assigns[:contact])
-        end
-      end
-
-      context "with invalid attributes" do
-        it 'does not save the new contact in the database' do
-          expect {
-            post :create,
-              contact: attributes_for(:invalid_contact)
-             }.not_to change(Contact, :count)
-        end
-
-        it 're-renders the :new template' do
-          post :create,
-            contact: attributes_for(:invalid_contact)
-          expect(response).to render_template :new
-        end
-      end
-
-      describe 'PATCH #update' do
-        before do
-          @contact = create(:contact,
-            firstname: 'Lawrence',
-            lastname: 'Smith')
-        end
-
-        context "valid attributes" do
-          it 'locates the requested @contact' do
-            patch :update, id: @contact, contact: attributes_for(:contact)
-            expect(assigns(:contact)).to eq(@contact)
-          end
-
-          it "changes @contact's attributes" do
-            patch :update, id: @contact,
-              contact: attributes_for(:contact,
-                firstname: 'Larry',
-                lastname: 'Smith')
-            @contact.reload
-            expect(@contact.firstname).to eq('Larry')
-            expect(@contact.lastname).to eq('Smith')
-          end
-
-          it 'redirects to the updated contact' do
-            patch :update, id: @contact, contact: attributes_for(:contact)
-            expect(response).to redirect_to @contact
-          end
-        end
-
-        context 'with invalid attributes' do
-          it "does not change the contact's attributes" do
-            patch :update, id: @contact,
-              contact: attributes_for(:contact,
-                firstname: 'Larry',
-                lastname: nil)
-            @contact.reload
-            expect(@contact.firstname).not_to eq('Larry')
-            expect(@contact.lastname).to eq('Smith')
-          end
-
-          it 're-renders the edit template' do
-            patch :update, id: @contact,
-              contact: attributes_for(:invalid_contact)
-            expect(response).to render_template :edit
-          end
-        end
-      end
-
-      describe 'DELETE #destroy' do
-        before do
-          @contact = create(:contact)
-        end
-
-        it 'deletes the contact' do
-          expect {
-            delete :destroy, id: @contact
-          }.to change(Contact, :count).by(-1)
-        end
-
-        it "redirects to contacts#index" do
-          delete :destroy, id: @contact
-          expect(response).to redirect_to contacts_url
-        end
-      end
-    end
+    it_behaves_like 'public access to contacts'
+    it_behaves_like 'full access to contacts'
   end
 
   describe "guest access" do
+      it_behaves_like 'public access to contacts'
+
     describe 'GET #new' do
       it 'requires login' do
         get :new
