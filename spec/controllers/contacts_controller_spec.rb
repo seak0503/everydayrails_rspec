@@ -199,8 +199,7 @@ describe ContactsController do
 
   describe 'administrator access' do
     before do
-      user = create(:admin)
-      session[:user_id] = user.id
+      set_user_session create(:admin)
     end
 
     it_behaves_like 'public access to contacts'
@@ -209,8 +208,7 @@ describe ContactsController do
 
   describe 'user access' do
     before do
-      user = create(:user)
-      session[:user_id] = user.id
+      set_user_session create(:user)
     end
 
     it_behaves_like 'public access to contacts'
@@ -223,7 +221,7 @@ describe ContactsController do
     describe 'GET #new' do
       it 'requires login' do
         get :new
-        expect(response).to redirect_to login_url
+        expect(response).to redirect_to require_login
       end
     end
 
@@ -231,7 +229,7 @@ describe ContactsController do
       it 'requires login' do
         contact = create(:contact)
         get :edit, id: contact
-        expect(response).to redirect_to login_url
+        expect(response).to redirect_to require_login
       end
     end
 
@@ -239,7 +237,7 @@ describe ContactsController do
       it 'requires login' do
         post :create, id: create(:contact),
           contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to redirect_to require_login
       end
     end
 
@@ -247,14 +245,14 @@ describe ContactsController do
       it 'requires login' do
         patch :update, id: create(:contact),
           contact: attributes_for(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to redirect_to require_login
       end
     end
 
     describe 'DELETE #destroy' do
       it 'requires login' do
         delete :destroy, id: create(:contact)
-        expect(response).to redirect_to login_url
+        expect(response).to redirect_to require_login
       end
     end
   end
