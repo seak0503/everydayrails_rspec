@@ -86,8 +86,8 @@ describe ContactsController do
       before do
         @phones = [
           attributes_for(:phone),
-          attributes_for(:pnone),
-          attributes_for(:pnone)
+          attributes_for(:phone),
+          attributes_for(:phone)
         ]
       end
 
