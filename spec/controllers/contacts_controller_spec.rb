@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe ContactsController do
+  let(:contact) do
+    create(:contact, firstname: 'Lawrence', lastname: 'Smith')
+  end
+
   shared_examples 'public access to contacts' do
     describe 'GET #index' do
       context "with params[:letter]" do
@@ -33,14 +37,12 @@ describe ContactsController do
     end
 
     describe 'GET #show' do
-      it 'assigns the requested contact to @contact' do
-        contact = create(:contact)
+      it 'assigns the requested contact to contact' do
         get :show, id: contact
         expect(assigns(:contact)).to eq contact
       end
 
       it 'renders the :show template' do
-        contact = create(:contact)
         get :show, id: contact
         expect(response).to render_template :show
       end
@@ -180,18 +182,15 @@ describe ContactsController do
     end
 
     describe 'DELETE #destroy' do
-      before do
-        @contact = create(:contact)
-      end
-
       it 'deletes the contact' do
+        contact
         expect {
-          delete :destroy, id: @contact
+          delete :destroy, id: contact
         }.to change(Contact, :count).by(-1)
       end
 
       it 'redirects to contacts#index' do
-        delete :destroy, id: @contact
+        delete :destroy, id: contact
         expect(response).to redirect_to contacts_url
       end
     end
