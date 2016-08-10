@@ -52,17 +52,17 @@ describe Contact do
   # 文字で姓をフィルタする
   describe 'filter last name by letter' do
     before do
-      @smith = Contact.create(
+      @smith = create(:contact,
         firstname: 'John',
         lastname: 'Smith',
         email: 'jsmith@example.com'
       )
-      @jones = Contact.create(
+      @jones = create(:contact,
         firstname: 'Tim',
         lastname: 'Jones',
         email: 'tjones@example.com'
       )
-      @johnson = Contact.create(
+      @johnson = create(:contact,
         firstname: 'John',
         lastname: 'Johnson',
         email: 'jjohnson@example.com'
