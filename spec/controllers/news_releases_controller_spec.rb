@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe NewsReleasesController, type: :controller, focus: true do
+describe NewsReleasesController, type: :controller do
   describe 'GET #new' do
     it 'requires login' do
       get :new

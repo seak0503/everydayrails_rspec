@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe NewsRelease, type: :model, focus: true do
+describe NewsRelease, type: :model do
   it { should validate_presence_of :released_on }
   it { should validate_presence_of :title }
   it { should validate_presence_of :body }
